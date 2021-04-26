@@ -107,8 +107,8 @@ Result BtAudioDevice::InitializeBtdrv()
 
     // TODO: Maybe not necessary
     #define BtdrvErrorAlreadyStarted 0x190071
-    //if (rc == BtdrvErrorAlreadyStarted)
-    //    rc = 0;
+    if (rc == BtdrvErrorAlreadyStarted)
+        rc = 0;
 
     if (R_FAILED(rc)) {
         eventClose(&m_btdrv_statechange_event);

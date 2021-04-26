@@ -32,6 +32,8 @@ private:
     DeviceMap m_devices;
     UTimer    m_reconnect_timer;
     BtPscListener m_psc_listener;
+    UTimer    m_connect_workaround_timer;
+    bool      m_is_first_connect;
 };
 
 extern Mutex g_btdrv_mutex;

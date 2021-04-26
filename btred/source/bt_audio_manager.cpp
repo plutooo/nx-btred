@@ -26,10 +26,13 @@ BtAudioManager g_audio_manager;
 
 BtAudioManager::BtAudioManager():
     m_is_initialized(false),
-    m_psc_listener(this)
+    m_psc_listener(this),
+    m_is_first_connect(true)
 {
     utimerCreate(&m_reconnect_timer, 1000000000ULL * 10, TimerType_Repeating);
     utimerStart(&m_reconnect_timer);
+
+    utimerCreate(&m_connect_workaround_timer, 1000000000ULL, TimerType_OneShot);
 
     mutexInit(&m_suspend_mutex);
 }
@@ -110,7 +113,8 @@ void BtAudioManager::PollEvents()
         &idx, -1,
         waiterForEvent(&m_btdrv_audio_connection_event),
         waiterForEvent(&m_btdrv_audio_info_event),
-        waiterForUTimer(&m_reconnect_timer));
+        waiterForUTimer(&m_reconnect_timer),
+        waiterForUTimer(&m_connect_workaround_timer));
 
     if (R_FAILED(rc))
         fatalThrowWithPc(rc);
@@ -134,6 +138,12 @@ void BtAudioManager::PollEvents()
                     mutexUnlock(&g_btdrv_mutex);
                 }
             }
+            break;
+
+        case 3: // m_connect_workaround_timer:
+            mutexLock(&g_btdrv_mutex);
+            btdrvCloseAudioConnection(g_config.GetHeadphonesBtAddress());
+            mutexUnlock(&g_btdrv_mutex);
             break;
     }
 
@@ -175,6 +185,14 @@ void BtAudioManager::RefreshDevices()
             }
 
             m_devices[btaddr] = device;
+
+            if (m_is_first_connect) {
+                // For some headphones, a reconnect is required after the
+                // first connect.
+                // TODO: Investigate deeper.
+                m_is_first_connect = false;
+                utimerStart(&m_connect_workaround_timer);
+            }
         }
     }
 
