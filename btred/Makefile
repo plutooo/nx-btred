@@ -12,7 +12,7 @@ include $(DEVKITPRO)/libnx/switch_rules
 TARGET		:=	btred
 APP_TITLE   :=  Bluetooth Audio Redirector
 APP_AUTHOR  :=  plutoo
-APP_VERSION :=  0.9
+APP_VERSION :=  0.9.1
 CONFIG_JSON :=  btred.json
 
 BUILD		:=	build

@@ -16,6 +16,11 @@ int main(int argc, char *argv[])
 
     mutexInit(&g_btdrv_mutex);
 
+    // Temporary workaround for race condition during boot.
+    // This is probably an issue in an official Nintendo sysmodule.
+    // TODO: Investigate deeper
+    svcSleepThread(5000000000ULL);
+
     rc = g_audio_manager.Initialize();
 
     if (R_FAILED(rc))
