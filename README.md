@@ -1,6 +1,3 @@
-# Currently deactivated: Noise issue
-There is an issue with some headphones outputting noise. For safety reasons I have disabled the Download section until I can figure out what's going on.
-
 # nx-btred
 nx-btred is a Bluetooth audio driver/redirector for Switch.
 
@@ -24,4 +21,4 @@ It uses the audrec:u service to record game audio, and then outputs it on the ne
 Due to a limitation of the audrec:u service, only games audio can be recorded (not the system applets).
 
 ## Thanks
-Thanks to ndeadly, SciresM and the Switchbrew crowd
+Thanks to ndeadly, SciresM, yellows8 and the rest of the Switchbrew crowd

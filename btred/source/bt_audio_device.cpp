@@ -107,8 +107,8 @@ Result BtAudioDevice::InitializeBtdrv()
 
     // TODO: Maybe not necessary
     #define BtdrvErrorAlreadyStarted 0x190071
-    if (rc == BtdrvErrorAlreadyStarted)
-        rc = 0;
+    //if (rc == BtdrvErrorAlreadyStarted)
+    //    rc = 0;
 
     if (R_FAILED(rc)) {
         eventClose(&m_btdrv_statechange_event);
@@ -150,7 +150,7 @@ Result BtAudioDevice::InitializeAudrec()
 
     FinalOutputRecorderParameter param_in;
     param_in.sample_rate = 48000;
-    param_in.padding = 0;
+    param_in.padding = 2;
 
     FinalOutputRecorderParameterInternal param_out;
     rc = audrecOpenFinalOutputRecorder(&m_audrec_recorder, &param_in, 0, &param_out);
@@ -166,6 +166,11 @@ Result BtAudioDevice::InitializeAudrec()
     }
 
     if (param_out.channel_count != 2) {
+        _audrecCleanup();
+        return -1;
+    }
+
+    if (param_out.sample_format != 2) { //PcmInt16
         _audrecCleanup();
         return -1;
     }
@@ -327,22 +332,19 @@ Result BtAudioDevice::QueueBuffer(void* buf)
 
 Result BtAudioDevice::AudioReceived()
 {
-    FinalOutputRecorderBuffer params[NUM_BUF];
+    u64 buffers[NUM_BUF];
     u64 count = NUM_BUF;
     u64 released;
     Result rc;
 
-    rc = audrecRecorderGetReleasedFinalOutputRecorderBuffers(&m_audrec_recorder, &params[0], &count, &released);
+    rc = audrecRecorderGetReleasedFinalOutputRecorderBuffers(&m_audrec_recorder, buffers, &count, &released);
 
     if (R_FAILED(rc))
         return rc;
 
     size_t i;
     for (i=0; i<count; i++) {
-        if (params[i].released_buffer_ptr == 0)
-            continue;
-
-        void* buf = (void*) params[i].released_buffer_ptr;
+        void* buf = (void*) buffers[i];
 
         ApplyVolume(buf);
         SendAudio(buf);

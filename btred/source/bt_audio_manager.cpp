@@ -32,7 +32,7 @@ BtAudioManager::BtAudioManager():
     utimerCreate(&m_reconnect_timer, 1000000000ULL * 10, TimerType_Repeating);
     utimerStart(&m_reconnect_timer);
 
-    utimerCreate(&m_connect_workaround_timer, 1000000000ULL, TimerType_OneShot);
+    utimerCreate(&m_connect_workaround_timer, 1000000000ULL * 5, TimerType_OneShot);
 
     mutexInit(&m_suspend_mutex);
 }

@@ -80,7 +80,7 @@ Result audrecRecorderAppendFinalOutputRecorderBuffer(AudrecRecorder* recorder, u
     }
 }
 
-Result audrecRecorderGetReleasedFinalOutputRecorderBuffers(AudrecRecorder* recorder, FinalOutputRecorderBuffer* out_params, u64* inout_count, u64* out_released) {
+Result audrecRecorderGetReleasedFinalOutputRecorderBuffers(AudrecRecorder* recorder, u64* out_buffers, u64* inout_count, u64* out_released) {
     struct {
         u64 count;
         u64 released;
@@ -94,13 +94,13 @@ Result audrecRecorderGetReleasedFinalOutputRecorderBuffers(AudrecRecorder* recor
     if (hosversionAtLeast(3,0,0)) {
         rc = serviceDispatchInOut(&recorder->s, 9, in, out,
             .buffer_attrs = { SfBufferAttr_HipcAutoSelect | SfBufferAttr_Out },
-            .buffers = { { out_params, sizeof(FinalOutputRecorderBuffer) * (*inout_count) } },
+            .buffers = { { out_buffers, sizeof(u64) * (*inout_count) } },
         );
     }
     else {
         rc = serviceDispatchInOut(&recorder->s, 5, in, out,
             .buffer_attrs = { SfBufferAttr_Out },
-            .buffers = { { out_params, sizeof(FinalOutputRecorderBuffer) * (*inout_count) } },
+            .buffers = { { out_buffers, sizeof(u64) * (*inout_count) } },
         );
     }
 

@@ -37,7 +37,7 @@ Result audrecRecorderStart(AudrecRecorder* recorder);
 Result audrecRecorderStop(AudrecRecorder* recorder);
 Result audrecRecorderRegisterBufferEvent(AudrecRecorder* recorder, Event* out_event);
 Result audrecRecorderAppendFinalOutputRecorderBuffer(AudrecRecorder* recorder, u64 buffer_client_ptr, FinalOutputRecorderBuffer* param);
-Result audrecRecorderGetReleasedFinalOutputRecorderBuffers(AudrecRecorder* recorder, FinalOutputRecorderBuffer* out_params, u64* inout_count, u64* out_released);
+Result audrecRecorderGetReleasedFinalOutputRecorderBuffers(AudrecRecorder* recorder, u64* out_buffers, u64* inout_count, u64* out_released);
 void audrecRecorderClose(AudrecRecorder* recorder);
 
 #ifdef __cplusplus
