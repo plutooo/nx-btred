@@ -16,7 +16,6 @@ It uses the audrec:u service to record game audio, and then outputs it on the ne
 4. Select your headphones and click A.
 5. Wait for it to pair.
 6. Enjoy!
-7. If the device connects but no audio output, press the power button to enter sleep-mode, then press it again to wake up.
 
 ## Limitations
 Due to a limitation of the audrec:u service, only games audio can be recorded (not the system applets).
