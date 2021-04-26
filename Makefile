@@ -12,4 +12,5 @@ dist: all
 	cp btpair/btpair.nro dist/switch/
 	cp btred/btred.nsp dist/atmosphere/contents/0100000000000081/exefs.nsp
 	touch dist/atmosphere/contents/0100000000000081/flags/boot2.flag
+	cp README.md dist/
 	(cd dist/ && zip -r ../dist.zip .)
