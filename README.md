@@ -16,3 +16,6 @@ It uses the audrec:u service to record game audio, and then outputs it on the ne
 4. Select your headphones and click A.
 5. Wait for it to pair.
 6. Enjoy!
+
+## Thanks
+Thanks to ndeadly, SciresM and the Switchbrew crowd
