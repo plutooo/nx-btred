@@ -82,7 +82,8 @@ Result audrecRecorderAppendFinalOutputRecorderBuffer(AudrecRecorder* recorder, u
 
 Result audrecRecorderGetReleasedFinalOutputRecorderBuffers(AudrecRecorder* recorder, u64* out_buffers, u64* inout_count, u64* out_released) {
     struct {
-        u64 count;
+        u32 count;
+        u32 padding;
         u64 released;
     } out;
 

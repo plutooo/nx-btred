@@ -5,7 +5,7 @@ extern "C" {
 #endif
 
 typedef struct {
-    u64 released_buffer_ptr;
+    u64 released_ns;
     u64 next_buffer_ptr;
     u64 sample_buffer_ptr;
     u64 sample_buffer_capacity;
@@ -15,7 +15,7 @@ typedef struct {
 
 typedef struct {
     u32 sample_rate;
-    u32 padding;
+    u32 channel_count;
 } FinalOutputRecorderParameter;
 
 typedef struct {

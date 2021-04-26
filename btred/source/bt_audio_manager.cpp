@@ -174,6 +174,10 @@ void BtAudioManager::RefreshDevices()
         BtdrvAddress btaddr = audio_addrs[i];
 
         if (!m_devices.contains(btaddr)) {
+            // Mute speakers during bluetooth initialization.
+            // This will be undone, at the end of the function.
+            audctlSetSystemOutputMasterVolume(0);
+
             TRACE("[+] New audio source\n");
             auto device = std::make_shared<BtAudioDevice>(btaddr);
 

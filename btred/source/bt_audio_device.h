@@ -2,7 +2,7 @@
 #include "audrec.h"
 
 #define NUM_BUF 8
-#define SAMPLES_PER_BUF 0x400
+#define SAMPLES_PER_BUF 0x400 // 0x800
 #define BUF_SIZE (SAMPLES_PER_BUF * sizeof(u16))
 #define TOTAL_SIZE (NUM_BUF * BUF_SIZE)
 

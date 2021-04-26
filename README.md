@@ -17,6 +17,9 @@ It uses the audrec:u service to record game audio, and then outputs it on the ne
 5. Wait for it to pair.
 6. Enjoy!
 
+## ⚠️ Warning ⚠️
+YOU USE THIS AT YOUR OWN RISK. Not every headphone brand has been tested. There may be really loud noise. Be careful, start out with a low volume, and then increase, if you like. In case of any type of malfunction, the sound will stop immediately if you hit the power button.
+
 ## Limitations
 Due to a limitation of the audrec:u service, only games audio can be recorded (not the system applets).
 

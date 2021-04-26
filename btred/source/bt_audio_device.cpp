@@ -95,8 +95,13 @@ Result BtAudioDevice::InitializeBtdrv()
         return rc;
     }
 
+    // Workaround: If I initialize AudioOut too early, for some reason
+    // it gets super high gain. This sleep seemingly prevently that.
+    // TODO: Investigate deeper.
+    svcSleepThread(2000000000ULL);
+
     BtdrvPcmParameter param;
-    param.unk_x0 = 1;
+    param.unk_x0 = 2;
     param.sample_rate = 48000;
     param.bits_per_sample = 16;
 
@@ -150,7 +155,7 @@ Result BtAudioDevice::InitializeAudrec()
 
     FinalOutputRecorderParameter param_in;
     param_in.sample_rate = 48000;
-    param_in.padding = 2;
+    param_in.channel_count = 2;
 
     FinalOutputRecorderParameterInternal param_out;
     rc = audrecOpenFinalOutputRecorder(&m_audrec_recorder, &param_in, 0, &param_out);
@@ -320,7 +325,7 @@ Result BtAudioDevice::RefreshAudrec()
 Result BtAudioDevice::QueueBuffer(void* buf)
 {
     FinalOutputRecorderBuffer param;
-    param.released_buffer_ptr = 0;
+    param.released_ns = 0;
     param.next_buffer_ptr = 0;
     param.sample_buffer_ptr = (u64)buf;
     param.sample_buffer_capacity = BUF_SIZE;
@@ -341,6 +346,9 @@ Result BtAudioDevice::AudioReceived()
 
     if (R_FAILED(rc))
         return rc;
+
+    if (count != 1)
+        return RefreshAudrec();
 
     size_t i;
     for (i=0; i<count; i++) {
@@ -370,6 +378,11 @@ Result BtAudioDevice::SendAudio(void* buf)
     rc = btdrvSendAudioData(m_btdrv_handle, buf, BUF_SIZE, &transferred);
     mutexUnlock(&g_btdrv_mutex);
 
+    if (R_SUCCEEDED(rc)) {
+        if (transferred != BUF_SIZE)
+            fatalThrow(0x8833);
+    }
+
     return rc;
 }
 
@@ -380,6 +393,9 @@ Result BtAudioDevice::ApplyVolume(void* buf)
 
     if (R_FAILED(rc))
         return rc;
+
+    if (vol.volume > 15)
+        fatalThrow(0x1111);
 
     // Here's how I arrived at that number.
     // x^0 = 1
