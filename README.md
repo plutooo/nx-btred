@@ -1,3 +1,6 @@
+# Currently deactivated: Noise issue
+There is an issue with some headphones outputting noise. For safety reasons I have disabled the Download section until I can figure out what's going on.
+
 # nx-btred
 nx-btred is a Bluetooth audio driver/redirector for Switch.
 

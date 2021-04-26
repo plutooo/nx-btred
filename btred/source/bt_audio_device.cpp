@@ -160,6 +160,16 @@ Result BtAudioDevice::InitializeAudrec()
         return rc;
     }
 
+    if (param_out.sample_rate != 48000) {
+        _audrecCleanup();
+        return -1;
+    }
+
+    if (param_out.channel_count != 2) {
+        _audrecCleanup();
+        return -1;
+    }
+
     TRACE("sample_rate: %u\n", param_out.sample_rate);
     TRACE("channel_count: %u\n", param_out.channel_count);
     TRACE("sample_format: %u\n", param_out.sample_format);
