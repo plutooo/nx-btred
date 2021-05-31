@@ -3,7 +3,6 @@
 #include <switch.h>
 #include "bt_audio_manager.h"
 #include "bt_config.h"
-#include "audrec.h"
 
 Mutex g_btdrv_mutex;
 

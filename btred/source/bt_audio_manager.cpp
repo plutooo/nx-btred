@@ -3,7 +3,6 @@
 #include <string.h>
 #include <malloc.h>
 #include <switch.h>
-#include "audctl.h"
 #include "bt_audio_manager.h"
 #include "bt_config.h"
 
@@ -64,7 +63,7 @@ Result BtAudioManager::Initialize()
         return rc;
     }
 
-    rc = _audctlInitialize();
+    rc = audctlInitialize();
 
     if (R_FAILED(rc)) {
         eventClose(&m_btdrv_audio_info_event);
@@ -76,7 +75,7 @@ Result BtAudioManager::Initialize()
     rc = m_psc_listener.Initialize();
 
     if (R_FAILED(rc)) {
-        _audctlCleanup();
+        audctlExit();
         eventClose(&m_btdrv_audio_info_event);
         eventClose(&m_btdrv_audio_connection_event);
         btdrvExit();
@@ -96,7 +95,7 @@ BtAudioManager::~BtAudioManager()
 
     if (m_is_initialized) {
         m_psc_listener.Finalize();
-        _audctlCleanup();
+        audctlExit();
         eventClose(&m_btdrv_audio_info_event);
         eventClose(&m_btdrv_audio_connection_event);
         btdrvExit();

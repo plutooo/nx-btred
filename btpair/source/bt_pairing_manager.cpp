@@ -19,30 +19,6 @@ Result btdrvMissionControlRedirectCoreEvents(bool enable)
     return serviceDispatchIn(btdrvGetServiceSession(), 65002, enable);
 }
 
-// TODO: move into libnx
-Result btdrvStartInquiryNew(u32 service_mask, s64 duration)
-{
-    const struct {
-        u32 service_mask;
-        s64 duration;
-    } in = {service_mask, duration};
-
-    return serviceDispatchIn(btdrvGetServiceSession(), 8, in);
-}
-
-// TODO: move into libnx
-Result btdrvRespondToSspRequestNew(BtdrvAddress addr, u32 variant, bool flag, u32 unk)
-{
-    const struct {
-        BtdrvAddress addr;
-        u8 flag;
-        u32 variant;
-        u32 unk;
-    } in = {addr, flag != 0, variant, unk};
-
-    return serviceDispatchIn(btdrvGetServiceSession(), 14, in);
-}
-
 const char *BtAddrToString(BtdrvAddress addr);
 
 BtPairingManager::BtPairingManager():
@@ -90,10 +66,10 @@ Result BtPairingManager::BeginScan()
     if (m_state != PairingState::Ready)
         return -1;
 
-    rc = btdrvStartInquiryNew(0xffffffff, 10200000000ull);
+    rc = btdrvStartInquiry(0xffffffff, 10200000000ull);
 
     if (!R_SUCCEEDED(rc)) {
-        TRACE("[!] btdrvStartInquiryNew %x\n", rc);
+        TRACE("[!] btdrvStartInquiry %x\n", rc);
         return rc;
     }
 
@@ -179,8 +155,8 @@ void BtPairingManager::PollEvents()
         m_devices[btaddr].ssp_passkey = info.ssp_request.v12.passkey;
 
         if (m_devices[btaddr].wants_pair) {
-            rc = btdrvRespondToSspRequestNew(btaddr, 0, true, info.ssp_request.v12.passkey);
-            TRACE("[?] btdrvRespondToSspRequestNew: %x\n", rc);
+            rc = btdrvRespondToSspRequest(btaddr, 0, true, info.ssp_request.v12.passkey);
+            TRACE("[?] btdrvRespondToSspRequest: %x\n", rc);
         }
 
         TRACE("[+] Pairing request from %s (%s)\n", m_devices[btaddr].name, BtAddrToString(btaddr));

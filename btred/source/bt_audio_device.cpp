@@ -4,7 +4,6 @@
 #include <switch.h>
 #include <arm_neon.h>
 #include <math.h>
-#include "audrec.h"
 #include "bt_audio_manager.h"
 #include "bt_config.h"
 
@@ -147,7 +146,7 @@ Result BtAudioDevice::InitializeAudrec()
 {
     Result rc;
 
-    rc = _audrecInitialize();
+    rc = audrecInitialize();
 
     if (R_FAILED(rc)) {
         return rc;
@@ -161,22 +160,22 @@ Result BtAudioDevice::InitializeAudrec()
     rc = audrecOpenFinalOutputRecorder(&m_audrec_recorder, &param_in, 0, &param_out);
 
     if (R_FAILED(rc)) {
-        _audrecCleanup();
+        audrecExit();
         return rc;
     }
 
     if (param_out.sample_rate != 48000) {
-        _audrecCleanup();
+        audrecExit();
         return -1;
     }
 
     if (param_out.channel_count != 2) {
-        _audrecCleanup();
+        audrecExit();
         return -1;
     }
 
     if (param_out.sample_format != 2) { //PcmInt16
-        _audrecCleanup();
+        audrecExit();
         return -1;
     }
 
@@ -189,7 +188,7 @@ Result BtAudioDevice::InitializeAudrec()
 
     if (R_FAILED(rc)) {
         audrecRecorderClose(&m_audrec_recorder);
-        _audrecCleanup();
+        audrecExit();
         return rc;
     }
 
@@ -198,7 +197,7 @@ Result BtAudioDevice::InitializeAudrec()
     if (R_FAILED(rc)) {
         audrecRecorderStop(&m_audrec_recorder);
         audrecRecorderClose(&m_audrec_recorder);
-        _audrecCleanup();
+        audrecExit();
         return rc;
     }
 
@@ -213,7 +212,7 @@ void BtAudioDevice::FinalizeAudrec()
         eventClose(&m_audrec_buffer_event);
         audrecRecorderStop(&m_audrec_recorder);
         audrecRecorderClose(&m_audrec_recorder);
-        _audrecCleanup();
+        audrecExit();
         m_is_audrec_initialized = false;
     }
 }
