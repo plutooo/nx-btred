@@ -107,7 +107,8 @@ void BtAudioManager::PollEvents()
 {
     Result rc;
     int idx;
-
+    int tryLockResult;
+    
     rc = waitMulti(
         &idx, -1,
         waiterForEvent(&m_btdrv_audio_connection_event),
@@ -117,8 +118,7 @@ void BtAudioManager::PollEvents()
 
     if (R_FAILED(rc))
         fatalThrowWithPc(rc);
-
-    mutexLock(&m_suspend_mutex);
+    if(mutextTryLock(&m_suspend_mutex)){
 
     switch (idx)
     {
@@ -144,6 +144,10 @@ void BtAudioManager::PollEvents()
             btdrvCloseAudioConnection(g_config.GetHeadphonesBtAddress());
             mutexUnlock(&g_btdrv_mutex);
             break;
+    }
+    }
+    else {
+        mutextLock(&m_suspend_mutex);
     }
 
     mutexUnlock(&m_suspend_mutex);
@@ -236,10 +240,11 @@ void BtAudioManager::OnSuspend()
     // throughout the entire suspend.
 
     mutexLock(&m_suspend_mutex);
-
+    m_devices.erase(m_devices.begin(), m_devices.end());
+    /*
     for (auto it = m_devices.begin(); it != m_devices.end(); ) {
         it = m_devices.erase(it);
-    }
+    }*/
 }
 
 void BtAudioManager::OnResume()
