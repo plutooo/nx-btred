@@ -130,12 +130,10 @@ void BtAudioManager::PollEvents()
             break;
 
         case 2: // m_reconnect_timer
-            if (m_devices.size() == 0) {
-                if (g_config.HasHeadphonesBtAddress()) {
+            if (m_devices.size() == 0 && g_config.HasHeadphonesBtAddress()) {
                     mutexLock(&g_btdrv_mutex);
                     btdrvOpenAudioConnection(g_config.GetHeadphonesBtAddress());
                     mutexUnlock(&g_btdrv_mutex);
-                }
             }
             break;
 
