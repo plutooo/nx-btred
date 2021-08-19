@@ -37,6 +37,8 @@ static const char* Header =
 
 int main(int argc, char *argv[])
 {
+    appletLockExit();
+    
     consoleInit(NULL);
     padConfigureInput(1, HidNpadStyleSet_NpadStandard);
 
@@ -132,7 +134,10 @@ int main(int argc, char *argv[])
         consoleUpdate(NULL);
     }
 
+    g_pairing_manager.Finalize();
+
     btdrvExit();
     consoleExit(NULL);
+    appletUnlockExit();
     return 0;
 }

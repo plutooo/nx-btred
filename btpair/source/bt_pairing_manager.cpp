@@ -29,13 +29,6 @@ Result BtPairingManager::Initialize()
 {
     Result rc;
 
-    rc = btdrvInitialize();
-
-    if (R_FAILED(rc)) {
-        TRACE("[!] btdrvInitialize %x\n", rc);
-        return rc;
-    }
-
     // TODO: If mission control is not installed, this will force terminate the IPC session.
     rc = btdrvMissionControlRedirectCoreEvents(true);
 
@@ -57,6 +50,14 @@ Result BtPairingManager::Initialize()
     m_state = PairingState::Ready;
     m_is_initialized = true;
     return rc;
+}
+
+void BtPairingManager::Finalize()
+{
+    if (m_is_initialized) {
+        eventClose(&m_btevent);
+        btdrvMissionControlRedirectCoreEvents(false);
+    }
 }
 
 Result BtPairingManager::BeginScan()
@@ -221,9 +222,5 @@ const char* BtPairingManager::GetState()
 
 BtPairingManager::~BtPairingManager()
 {
-    if (m_is_initialized) {
-        eventClose(&m_btevent);
-        btdrvMissionControlRedirectCoreEvents(false);
-        btdrvExit();
-    }
+
 }

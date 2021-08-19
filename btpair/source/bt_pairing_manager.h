@@ -22,6 +22,7 @@ class BtPairingManager {
 public:
     BtPairingManager();
     Result Initialize();
+    void Finalize();
     Result BeginScan();
     void PollEvents();
     void Pair(BtdrvAddress addr);
