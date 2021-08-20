@@ -157,10 +157,10 @@ void BtPscListener::HandleEvent()
 
             break;
 
-        case PscPmState_ReadyAwaken:
+        //case PscPmState_ReadyAwaken:
         case PscPmState_ReadySleep:
         case PscPmState_ReadySleepCritical:
-        case PscPmState_ReadyAwakenCritical:
+        //case PscPmState_ReadyAwakenCritical:
             if (!m_is_suspended) {
                 m_parent->OnSuspend();
                 m_is_suspended = true;

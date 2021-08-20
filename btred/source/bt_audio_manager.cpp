@@ -107,7 +107,7 @@ void BtAudioManager::PollEvents()
 {
     Result rc;
     int idx;
-
+    
     rc = waitMulti(
         &idx, -1,
         waiterForEvent(&m_btdrv_audio_connection_event),
@@ -117,34 +117,37 @@ void BtAudioManager::PollEvents()
 
     if (R_FAILED(rc))
         fatalThrowWithPc(rc);
+  
+    //if(mutexTryLock(&m_suspend_mutex)){
+        mutexLock(&m_suspend_mutex);
+        switch (idx)
+        {
+            case 0: // m_audio_connection_event
+                RefreshDevices();
+                break;
 
-    mutexLock(&m_suspend_mutex);
+            case 1: // m_audio_info_event
+                break;
 
-    switch (idx)
-    {
-        case 0: // m_audio_connection_event
-            RefreshDevices();
-            break;
-
-        case 1: // m_audio_info_event
-            break;
-
-        case 2: // m_reconnect_timer
-            if (m_devices.size() == 0) {
-                if (g_config.HasHeadphonesBtAddress()) {
-                    mutexLock(&g_btdrv_mutex);
-                    btdrvOpenAudioConnection(g_config.GetHeadphonesBtAddress());
-                    mutexUnlock(&g_btdrv_mutex);
+            case 2: // m_reconnect_timer
+                if (m_devices.size() == 0 && g_config.HasHeadphonesBtAddress()) {
+                        mutexLock(&g_btdrv_mutex);
+                        btdrvOpenAudioConnection(g_config.GetHeadphonesBtAddress());
+                        mutexUnlock(&g_btdrv_mutex);
                 }
-            }
-            break;
+                break;
 
-        case 3: // m_connect_workaround_timer:
-            mutexLock(&g_btdrv_mutex);
-            btdrvCloseAudioConnection(g_config.GetHeadphonesBtAddress());
-            mutexUnlock(&g_btdrv_mutex);
+            case 3: // m_connect_workaround_timer:
+                mutexLock(&g_btdrv_mutex);
+                btdrvCloseAudioConnection(g_config.GetHeadphonesBtAddress());
+                mutexUnlock(&g_btdrv_mutex);
+                break;
+
+            default:
             break;
-    }
+        }
+    //}
+    //else mutexLock(&m_suspend_mutex);
 
     mutexUnlock(&m_suspend_mutex);
 }
@@ -234,12 +237,11 @@ void BtAudioManager::OnSuspend()
     // Similar/same issue arises if we open an audio connection during
     // suspend. Therefore we must hold this lock to pause the main thread
     // throughout the entire suspend.
-
     mutexLock(&m_suspend_mutex);
-
-    for (auto it = m_devices.begin(); it != m_devices.end(); ) {
-        it = m_devices.erase(it);
-    }
+    //for (auto it = m_devices.begin(); it != m_devices.end(); )
+    //    it = m_devices.erase(it);
+    m_devices.erase(m_devices.begin(), m_devices.end());
+    audctlSetSystemOutputMasterVolume(1);
 }
 
 void BtAudioManager::OnResume()
