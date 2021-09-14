@@ -27,7 +27,7 @@ Result BtConfig::Initialize()
         fread(&settings_file, sizeof(SetSysBluetoothDevicesSettings), 1, fd);
 
         Result rc;
-        rc = btdrvGetPairedDeviceInfo(m_btsettings.addr, &settings_current);
+        rc = btdrvGetPairedDeviceInfo(settings_file.addr, &settings_current);
 
         if (R_SUCCEEDED(rc)) {
             m_btsettings = settings_current;
@@ -80,6 +80,7 @@ void BtConfig::SetHeadphonesBtAddress(BtdrvAddress btaddr)
     if (R_SUCCEEDED(rc)) {
         dirty = dirty || NE(m_btsettings, settings);
         m_btsettings = settings;
+        m_btaddr = btaddr;
     }
 
     if (dirty) {
@@ -90,6 +91,11 @@ void BtConfig::SetHeadphonesBtAddress(BtdrvAddress btaddr)
 BtdrvAddress BtConfig::GetHeadphonesBtAddress()
 {
     return m_btaddr;
+}
+
+SetSysBluetoothDevicesSettings* BtConfig::GetHeadphonesBtSettings()
+{
+    return &m_btsettings;
 }
 
 bool BtConfig::HasHeadphonesBtAddress()

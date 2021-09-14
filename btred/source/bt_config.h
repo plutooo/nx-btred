@@ -9,6 +9,7 @@ public:
     bool HasHeadphonesBtAddress();
     void SetHeadphonesBtAddress(BtdrvAddress btaddr);
     BtdrvAddress GetHeadphonesBtAddress();
+    SetSysBluetoothDevicesSettings* GetHeadphonesBtSettings();
 
 private:
     SetSysBluetoothDevicesSettings m_btsettings;

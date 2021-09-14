@@ -240,11 +240,17 @@ void BtAudioManager::OnSuspend()
     for (auto it = m_devices.begin(); it != m_devices.end(); ) {
         it = m_devices.erase(it);
     }
+
+    if (g_config.HasHeadphonesBtAddress())
+        btdrvRemoveBond(g_config.GetHeadphonesBtAddress());
 }
 
 void BtAudioManager::OnResume()
 {
     // Warning: This function is executed in the PSC event listener thread.
+
+    if (g_config.HasHeadphonesBtAddress())
+        btdrvAddPairedDeviceInfo(g_config.GetHeadphonesBtSettings());
 
     mutexUnlock(&m_suspend_mutex);
 }
